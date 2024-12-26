@@ -67,6 +67,31 @@ User.priority first(0>1>2), and then use reservation_time to queue
 <br><br>
 
 
+
+## Config setup:
+```python
+# config.py
+import os
+
+class Flask_Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'mysql+pymysql://[account]:[password]@localhost/[db name]'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SESSION_TYPE = 'filesystem'
+    SESSION_PERMANENT = False
+
+class SMTP_Config:
+    SENDER_EMAIL = "xxxxxxx@gmail.com"
+    PASSWORD = "xxxxxxxx"
+
+class Charts_Config:
+    MAX_DISPLAY_DAYS = 7
+    AGGREGATION_INTERVAL_MINUTES = 30
+```
+---
+---
+<br><br>
+
 # Database tables:
 ## Table `Reservation`:
 | Field             | Type          | Constraints                              | Description                     |
