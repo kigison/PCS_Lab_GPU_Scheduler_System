@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Reservation Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <a href="{{ url_for('index')}}" class="btn btn-danger"> Back</a>
+        <h2>GPU Reservation Management</h2>
+        
+        {% for gpu in GPUs_data %}
+        <div class="container">
+            <h4>Waiting List: {{ gpu.model }} - {{ gpu.cuda_version }} {{ gpu.max_hours }}</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order</th>
+                            <th>User</th>
+                            <th>Lab</th>
+                            <th>Booking Time Period</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- {% for waiting in waiting_list_A100 %} -->
+                        <tr>
+                            <td>{{ loop.index0 }}</td>
+                            <td>{{ loop.index0 }}({{ loop.index0 }})</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <!-- {% endfor %} -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="container mt-5">
+        <h2>Reservation History</h2>
+        
+        {% for gpu in GPUs_data %}
+        <div class="container">
+            <h4>Waiting List: {{ gpu.model }} - {{ gpu.cuda_version }} {{ gpu.max_hours }}</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order</th>
+                            <th>User</th>
+                            <th>Lab</th>
+                            <th>Booking Time Period</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- {% for waiting in waiting_list_A100 %} -->
+                        <tr>
+                            <td>{{ loop.index0 }}</td>
+                            <td>{{ loop.index0 }}({{ loop.index0 }})</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <!-- {% endfor %} -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="/static/js/reservation.js"></script>
+{% endblock %}
+

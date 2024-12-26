@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>PCS Lab GPU Scheduler</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+
+{% block body %}
+    <h1>PCS Lab GPU Scheduler</h1>
+    <div class="container mt-5">
+        {% if 'user_id' in session %}
+            <h2>Welcome, {{ session['name'] }}</h2>
+        {% else %}
+            <h2>Hi, visitor! Please log in first.</h2>
+        {% endif %}
+        <hr>
+        <div class="list-group list-group-horizontal-lg">
+            {% if 'user_id' in session %}
+                <a href="/reservation" class="list-group-item list-group-item-action text-primary center-text">Reservation</a>
+                <a href="/dashboard" class="list-group-item list-group-item-action text-primary center-text">Dashboard</a>
+                <a href="/edit_profile" class="list-group-item list-group-item-action text-primary center-text">Edit profile</a>
+                {% if session['is_admin'] %}
+                    <a href="/reservation_manage" class="list-group-item list-group-item-action center-text">Reservation Management</a>
+                    <a href="/account_manage" class="list-group-item list-group-item-action center-text">Account Management</a>
+                    <a href="/GPU_manage" class="list-group-item list-group-item-action center-text">GPU Management</a>
+                    <a href="/user_gpu_access_manage" class="list-group-item list-group-item-action center-text">User-GPU Management</a>
+                {% endif %}
+                <a href="/logout" class="list-group-item list-group-item-action text-danger center-text">Logout</a>
+            {% else %}
+                <a href="/login" class="list-group-item list-group-item-action text-danger center-text">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Announcement</h2>
+        <hr>
+        <div class="sub-container">
+            <h3>系統開發中</h3>
+            <h6>2024/12/25</h6>
+            <ol>
+                <li>將提供GPU Reservation功能</li>
+                <li>開發進度90%</li>
+                <li>Bug回報與改進建議請聯絡PCS Lab大總管</li>
+            </ol>
+        </div>
+
+        <div class="sub-container">
+            <h3>YB 要求更新使用規則</h3>
+            <h6>2024/12/21</h6>
+            <ol>
+                <li>總共 4 張 A100，以 4 個帳號各使用一張 GPU。</li>
+                <li>YB 於 11/21 表示: 張育嘉、黃舒祺共用一張，並擁有最高優先權。</li>
+                <li>基於第 2 點，開啟「hsc」帳號供他們專屬使用。</li>
+                <li>YB 於 11/21 表示: 非 PCS Lab 的學生限共用一張，且優先權應低於 PCS Lab 成員。</li>
+                <li>基於第 4 點，開啟「shared_account_3」帳號供他們專屬使用。</li>
+                <li>因 YOLO 對 CUDA 版本需求，以及需求量較低的人，開啟「shared_account_1」帳號供他們輪流使用。</li>
+                <li>開啟「shared_account_2」帳號供所有人排隊使用，每次 container 用完可刪除不做保留（由下一位自行決定）。</li>
+                <li>
+                    「shared_account_2」之使用規定:
+                    <ol type="a">
+                        <li>優先順位: 張育嘉 & 黃舒祺 > PCS Lab > 范老師實驗室。同一優先順位之使用者，順序依登記時間先後為主。</li>
+                        <li>使用前須前往表單登記，依順序輪流使用，使用完畢後應立即在群組通知下位使用者。</li>
+                        <li>如後續無人，亦應於群組回報使用完畢；如接續於空閒時段，亦應於群組回報開始使用。</li>
+                        <li>每人每次使用時間以 48H 為限，以前一使用者在群組通知的時間為主，即開始計時。超時者除違規外，亦會隨時被刪除 container。</li>
+                        <li>如有更長時間的計算需求，請向網管 Eden 提出，使用狀況都需要反饋給 YB。</li>
+                        <li>罰則:
+                            <ul>
+                                <li>如違反前述使用規定則水桶 30 天，時間到後自行連絡管理員解除狀態。</li>
+                                <li>如於非你申請的時段私自使用（超時除外），永久水桶，請自行找 YB 解釋原因解封。</li>
+                            </ul>
+                        </li>
+                        <li>使用流程: 表單登記申請 -> 輪到你後上線使用 -> 使用完畢於群組通知下一位。</li>
+                    </ol>
+                </li>
+                <li>
+                    「shared_account_1」之使用規定比照第 8 點，但環境限制在 CUDA 11.3 且不刪 container。
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}

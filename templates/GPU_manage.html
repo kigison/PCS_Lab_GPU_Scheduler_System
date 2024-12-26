@@ -1,0 +1,99 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>GPU Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+{% endblock %}
+
+{% block body %}
+    <div class="container-for-table">
+        <a href="{{ url_for('index')}}" class="btn btn-primary">Back</a>
+        <h2>GPU Management</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Model</th>
+                        <th>Environment Version</th>
+                        <th>Max Hours</th>
+                        <th>Connection Info</th>
+                        <th>Status</th>
+                        <th>In use</th>
+                        <th>Actions <i class="bi bi-lock-fill action-header-icon" data-column="actions" data-state="locked" style="cursor: pointer;"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for gpu in GPUs_data %}
+                    <tr>
+                        <td>{{ gpu.id }}</td>
+                        <td>{{ gpu.model }}</td>
+                        <td>{{ gpu.cuda_version }}</td>
+                        <td>
+                            <input type="number" class="form-control max_hours-number" data-id="{{ gpu.id }}" min="0" step="1" value="{{ gpu.max_hours }}" required>
+                        </td>
+                        <td>
+                            <textarea class="table-text-input connection_info-input" data-id="{{ gpu.id }}" rows="3" required>{{ gpu.connection_info }}</textarea>
+                        </td>
+                        <td>
+                            <select class="form-select status-select" data-id="{{ gpu.id }}">
+                                <option value="false" {% if gpu.status %}selected{% endif %}>(X) Disabled</option>
+                                <option value="true" {% if gpu.status %}selected{% endif %}>(O) Enabled</option>
+                            </select>
+                        </td>
+                        <th>
+                            {% if gpu.in_use %}
+                                <div class="text-success">(O)</div>
+                            {% else %}
+                                <div class="text-danger">(X)</div>
+                            {% endif %}
+                        </th>
+                        <td>
+                            <button class="btn btn-success save-btn" data-id="{{ gpu.id }}">Update</button>
+                            <button class="btn btn-danger remove-btn" data-id="{{ gpu.id }}">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td>
+                            <select class="form-select model-select" data-id="add">
+                                <option value="" selected hidden disabled>--Select model--</option>
+                                <option value="GH200_480G">GH200_480G</option>
+                                <option value="A100_40G">A100_40G</option>
+                                <option value="V100_16G">V100_16G</option>
+                                <option value="A2_16G">A2_16G</option>
+                                <option value="RTX4090_24G">RTX4090_24G</option>
+                                <option value="RTX4070_12G">RTX4070_12G</option>
+                                <option value="RTX3080_10G">RTX3080_10G</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="table-text-input cuda_version-select" data-id="add">
+                                <option value="" selected hidden disabled>--Select image--</option>
+                                <option value="aim / LLM RAG NYCU">aim / LLM RAG NYCU</option>
+                                <option value="aim / PyTorch 2.4.1 (GPU / Retriever)">aim / PyTorch 2.4.1 (GPU / Retriever)</option>
+                                <option value="aim / TensorFlow 2.0.0 (GPU)">aim / TensorFlow 2.0.0 (GPU)</option>
+                                <option value="aim / PyTorch 2.1.0 (GPU / LLM)">aim / PyTorch 2.1.0 (GPU / LLM)</option>
+                                <option value="aim / PyTorch 2.1.0 (GPU / ssh)">aim / PyTorch 2.1.0 (GPU / ssh)</option>
+                                <option value="aim / TensorFlow 1.15.5 + PyTorch 1.8.1">aim / TensorFlow 1.15.5 + PyTorch 1.8.1</option>
+                                <option value="aim / Unrestricted">aim / Unrestricted</option>
+                                <option value="ubuntu / cuda12.2">ubuntu 22.04.5 / cuda12.2</option>
+                                <option value="ubuntu / cuda12.2">ubuntu 18.04.6 / cuda10.2</option>
+                            </select>
+                        </td>
+                        <td></td>
+                        <td><textarea class="table-text-input connection_info-input" data-id="add" placeholder="Account/Pwd or SSH ip:port" required></textarea></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button class="btn btn-success add-btn" data-id="add">Addition</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="/static/js/GPU_manage.js"></script>
+{% endblock %}

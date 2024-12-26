@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>PCS Lab GPU Scheduler</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+        <a href="{{ url_for('index')}}" class="btn btn-primary"> Back</a>
+        <h1>Dashboard</h1>
+
+        {% if access_gpu_model is defined and not access_gpu_model %}
+            <div class="alert alert-info">
+                No GPUs available for display in your GPU authorization.
+            </div>
+        {% endif %}
+
+        {% if 'GH200_480G' in access_gpu_model %}
+        {% endif %}
+
+        {% if 'A100_40G' in access_gpu_model %}
+            <div class="container">
+                <h2>A100 GPU Statistics</h2>
+                <hr>
+                <div >
+                    <div class="grid-container">
+                        <div class="grid-index">
+                            <h4>gpu_index:</h4>
+                            <ul>
+                                <li>0: acc2/no_code-所有人排隊共用、陳蕙琳</li>
+                                <li>1: acc3-Ann、范老師(陳濬嫙、塗峻翔、專題生)</li>
+                                <li>2: hsc-張育嘉、黃舒祺</li>
+                                <li>3: acc1(cuda11.3)-陳怡廷、王旻玄、明峰老師學生</li>
+                            </ul>
+                        </div>
+
+                        <div class="grid-item">
+                            <!-- <h4>記憶體利用率 (Memory Utilization):</h4> -->
+                            <div class="chart-container" id="memory-utilization">
+                                <div class="loading-spinner" id="loading-memory-utilization">Loading...</div>
+                                <div id="chart-memory-utilization"></div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="grid-item">
+                            <!-- <h4>GPU 利用率 (GPU Utilization):</h4> -->
+                            <div class="chart-container" id="gpu-utilization">
+                                <div class="loading-spinner" id="loading-gpu-utilization">Loading...</div>
+                                <div id="chart-gpu-utilization"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <!-- <h4>已用記憶體 (Memory Used):</h4> -->
+                            <div class="chart-container" id="memory-used">
+                                <div class="loading-spinner" id="loading-memory-used">Loading...</div>
+                                <div id="chart-memory-used"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <!-- <h4>GPU 溫度 (GPU Temperature):</h4> -->
+                            <div class="chart-container" id="gpu-temperature">
+                                <div class="loading-spinner" id="loading-gpu-temperature">Loading...</div>
+                                <div id="chart-gpu-temperature"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if 'V100_16G' in access_gpu_model %}
+        {% endif %}
+
+        {% if 'A2_16G' in access_gpu_model %}
+        {% endif %}
+
+        {% if 'RTX4090_24G' in access_gpu_model %}
+        {% endif %}
+
+        {% if 'RTX4070_12G' in access_gpu_model %}
+        {% endif %}
+
+        {% if 'RTX3080_10G' in access_gpu_model %}
+        {% endif %}
+        
+    </div>
+    
+    {% if 'user_id' in session %}
+        <script>
+            fetch('/charts')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
+                    }
+
+                    const PlotlyLayout = {
+                        margin: {l: 0, r: 0, b: 0, t: 30, pad: 0},
+                        height: 250,
+                        xaxis: {
+                            tickformat: '%b %-d',
+                            hoverformat: '%b %-d, %Y, %H:%M'
+                        }
+                    };
+
+                    data.fig_utilization_memory.layout = { ...data.fig_utilization_memory.layout, ...PlotlyLayout };
+                    data.fig_utilization_gpu.layout = { ...data.fig_utilization_gpu.layout, ...PlotlyLayout };
+                    data.fig_memory_used.layout = { ...data.fig_memory_used.layout, ...PlotlyLayout };
+                    data.fig_temperature_gpu.layout = { ...data.fig_temperature_gpu.layout, ...PlotlyLayout };
+
+                    // Create the plots and hide loading spinner once complete
+                    Plotly.newPlot('chart-memory-utilization', data.fig_utilization_memory.data, data.fig_utilization_memory.layout, {responsive: true})
+                        .then(() => document.getElementById('loading-memory-utilization').style.display = 'none');
+
+                    Plotly.newPlot('chart-gpu-utilization', data.fig_utilization_gpu.data, data.fig_utilization_gpu.layout, {responsive: true})
+                        .then(() => document.getElementById('loading-gpu-utilization').style.display = 'none');
+
+                    Plotly.newPlot('chart-memory-used', data.fig_memory_used.data, data.fig_memory_used.layout, {responsive: true})
+                        .then(() => document.getElementById('loading-memory-used').style.display = 'none');
+
+                    Plotly.newPlot('chart-gpu-temperature', data.fig_temperature_gpu.data, data.fig_temperature_gpu.layout, {responsive: true})
+                        .then(() => document.getElementById('loading-gpu-temperature').style.display = 'none');
+                })
+                .catch(error => console.error('Error fetching charts:', error));
+        </script>
+    {% endif %}
+{% endblock %}

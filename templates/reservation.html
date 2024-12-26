@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Reservation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+{% endblock %}
+
+{% block body %}
+    
+    <div class="container mt-5">
+        <a href="{{ url_for('index')}}" class="btn btn-danger"> Back</a>
+        <h2>GPU Reservation</h2>
+
+        {% if GPUs_data is defined and not GPUs_data %}
+            <div class="alert alert-info">
+                You don't have any authorized GPUs..
+            </div>
+        {% endif %}
+        
+        {% for gpu in GPUs_data %}
+        <div class="container">
+            <h4>Waiting List: {{ gpu.model }} - {{ gpu.cuda_version }}</h4>
+            <div class="container table-responsive">
+                <table class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order</th>
+                            <th>User/Lab</th>
+                            <th>Priority</th>
+                            <th>Booking Duration (Hour)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for waiting in gpu.waiting_list %}
+                            <tr>
+                                <td>{{ loop.index0 }}</td>  <!-- Order ID -->
+                                <td>{{ waiting.name }}({{ waiting.username }})/{{ waiting.lab }}</td>  <!-- 林一平(yblin)/PCS lab -->
+                                <td>{{ waiting.priority }}</td>  <!-- Priority -->
+                                <td>{{ waiting.duration }}</td>  <!-- Booking Duration -->
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="container">
+                {% if gpu.current_reservation %}
+                    {% if gpu.start_time %}
+                        <div class="alert alert-info">
+                            You are using GPU now.
+                        </div>
+                        <button class="btn btn-primary terminate-btn" data-id="{{ gpu.id }}">Terminate</button>
+                    {% elif gpu.end_time %}
+                        <div class="alert alert-info">
+                            You have got the GPU access right.  Please click "Start" and start to use GPU.
+                        </div>
+                        <button class="btn btn-primary start-btn" data-id="{{ gpu.id }}">Start</button>
+                    {% else %}
+                        <div class="alert alert-info">
+                            You have already reserved for GPU usage.
+                        </div>
+                        <button class="btn btn-primary cancel-btn" data-id="{{ gpu.id }}">Cancel</button>
+                    {% endif %}
+                {% elif gpu.status %}
+                    <!--<div class="alert alert-success">
+                        Nearest available reservation can start at: 
+                        <strong>{{ nearest_time }}</strong>
+                    </div>-->
+                    <div class="d-flex align-items-center mb-3">
+                        <label for="duration" class="form-label me-2">Booking Duration ({{ gpu.max_hours }} hrs max):</label>
+                        <input type="number" class="form-control me-2 duration" style="width: auto;" min="1" max="{{ gpu.max_hours }}" value="24" data-id="{{ gpu.id }}" required>
+                        <label for="duration" class="form-label me-2"><br>/hr(s)</label>
+                        <button class="btn btn-primary reserve-btn" data-id="{{ gpu.id }}">Reserve</button>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        This GPU can't be reservation now.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    <script src="/static/js/reservation.js"></script>
+{% endblock %}
+

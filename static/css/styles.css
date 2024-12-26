@@ -1,0 +1,211 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reset-password-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    /* max-width: 400px; */
+    margin: 10px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sub-container {
+    margin: 10px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.container-for-table {
+    max-width: 1500px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 列 */
+    gap: 12px; /* 元素之間的間距 */
+}
+
+.grid-index {
+    grid-column: span 2; /* 讓 gpu_index 佔據兩列 */
+    border: 1px solid #ddd; /* 可選：為 gpu_index 加邊框 */
+    padding: 10px; /* 可選：內部填充 */
+    border-radius: 8px; /* 可選：圓角 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 可選：添加陰影 */
+}
+    
+.grid-item {
+    text-align: center; /* 對齊標題和內容 */
+    border: 1px solid #ddd; /* 可選：為每個格子添加邊框 */
+    padding: 10px; /* 可選：內部填充 */
+    border-radius: 8px; /* 可選：圓角 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 可選：添加陰影 */
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
+}
+
+input[readonly] {
+    background-color: #f9f9f9; /* 淺灰色背景 */
+    color: #333;              /* 字體顏色 */
+    border: 1px solid #ddd;   /* 邊框 */
+    cursor: not-allowed;      /* 滑鼠顯示不可編輯 */
+}
+
+input.invalid {
+    border-color: red;        /* 無效輸入時邊框變紅 */
+}
+
+input.valid {
+    border-color: green;      /* 有效輸入時邊框變綠 */
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-link button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.register-link button:hover {
+    background-color: #218838;
+}
+
+.center-text {
+    text-align: center;
+}
+
+
+.table-responsive {
+    overflow-x: auto; /* 啟用水平滾動條 */
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%; /* 撐滿容器 */
+    min-width: 100%; /* 設定表格的最小寬度 */
+    table-layout: auto; /* 自適應列寬 */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    white-space: nowrap; /* 禁止換行 */
+}
+
+.table th {
+    text-align: center; /* 水平置中 */
+    vertical-align: middle; /* 垂直置中 */
+    white-space: nowrap; /* 防止過長標題換行 */
+}
+
+/* 確保輸入框內容顯示完整 */
+.table-text-input {
+    width: 100%; /* 撐滿表格單元格寬度 */
+    box-sizing: border-box; /* 包含 padding 在內 */
+    overflow: hidden; /* 防止過度溢出 */
+    white-space: nowrap; /* 禁止換行 */
+    padding: .175rem .2rem .175rem .2rem; /* 調整內部填充 */
+}
+
+.form-select {
+    width: auto;
+    min-width: 100px;
+    box-sizing: border-box;
+    padding: .375rem 2.25rem .375rem .75rem; /* 調整內部填充 */
+}
+
+.chart-container {
+    display: flex;
+    justify-content: center; /* 中心對齊 */
+    align-items: center;     /* 垂直對齊 */
+    position: relative;
+    height: 250px; /* 可以根據需要調整 */
+    margin-bottom: 20px;
+}
+
+.loading-spinner {
+    position: absolute;
+    font-size: 1.5em;
+    color: #999;
+}
+
+#chart-memory-utilization, #chart-gpu-utilization, #chart-memory-used, #chart-gpu-temperature {
+    width: 100%;
+    height: 100%;
+}

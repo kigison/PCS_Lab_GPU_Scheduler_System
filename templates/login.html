@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login-styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block body %}
+    <div class="form-container">
+        <form id="loginForm">
+            <a href="{{ url_for('index')}}" style="text-decoration:none"><i class="fa-solid fa-left-long"></i> Back</a>
+            <br><br>
+            <img src="{{ url_for('static', filename='images/icon.png') }}" height="120" class="center" />
+            <h2> PCS Lab</h2>
+            <h3> GPU Scheduler System</h3>
+            <hr>
+
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" placeholder="Enter your user ID" required>
+
+            <label for="password">Password</label>
+            <div class="pass">
+                <input type="password" class="pass" name="password" placeholder="Enter your password" id="password" autocomplete="on" required>
+                <i id="show-hide" class="fa-solid fa-eye-slash"></i>
+            </div>
+            <input type="hidden" name="isMobileDevice" id="isMobileDevice">
+            <button type="submit">Sign In</button>
+            
+            <hr>
+            <div class="social-container">
+                <!-- <h3> Login with </h3>
+                <div class="social">
+                    <div><a class="WebAuthn" href="#"><i class="fa-solid fa-fingerprint fa-2xl" style="margin: 3px;"></i><br>WebAuthn</a></div>
+                </div> -->
+                <div class="register-link">
+                    <h3>Or</h3>
+                    <!-- <label for="redirectButton">Or</label> -->
+                    <button id="redirectButton">Sign Up</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="/static/js/login.js"></script>
+{% endblock %}
