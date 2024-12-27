@@ -411,9 +411,6 @@ def reservation_manage():
                     "gpu_id": gpu.id,
                     "model": gpu.model,
                     "cuda_version": gpu.cuda_version,
-                    "max_hours": math.ceil(gpu.max_hours*current_user.time_multiplier),  # user可預約的最大時間
-                    "connection_info": gpu.connection_info,  # 用於提供連接資訊(輪到當下才顯示)
-                    "status": gpu.status,  # 用於判斷能否預約
                     "history_list": reservation_history.filter(Reservation.gpu_id==gpu.id).all()
                 }
             )
