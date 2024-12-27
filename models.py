@@ -17,6 +17,7 @@ class User(db.Model):
     time_multiplier = db.Column(db.Float, default=1.0, nullable=False)  # GPU 可租用時間倍率
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    is_show = db.Column(db.Boolean, default=True, nullable=False)
     
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -88,6 +89,7 @@ class GPU(db.Model):
     connection_info = db.Column(db.String(255), nullable=False)  # 連線方式與帳密
     status = db.Column(db.Boolean, nullable=False)  # 狀態：啟用/禁用
     in_use = db.Column(db.Boolean, default=False)  # 是否正在使用
+    is_show = db.Column(db.Boolean, default=True, nullable=False)
 
     def list_users(self):
         stmt = (

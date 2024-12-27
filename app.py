@@ -116,6 +116,8 @@ def login():
         password = data.get('password')
 
         user = User.query.filter_by(username=username).first()
+        if user and user.is_show:
+            return jsonify({"message": f"Hi, {user.name}. You have been deleted!"}), 401
         if user and user.check_password(password):
             session['user_id'] = user.id
             session['username'] = username
@@ -238,7 +240,11 @@ def reservation():
     if request.method == 'GET':
         gpu_access_id_list = current_user.list_gpu_access_id()
         
-        GPU_list = GPU.query.order_by(-GPU.status, GPU.model, GPU.cuda_version, GPU.id).all()
+        GPU_list = GPU.query.order_by(
+            -GPU.status, GPU.model, GPU.cuda_version, GPU.id
+        ).filter(
+            GPU.is_show==True
+        ).all()
         GPUs_data = []
         
         for gpu in GPU_list:
@@ -578,7 +584,9 @@ def account_manage():
     
     if request.method == 'GET':
         # Retrieve all users from the database and show them in a list.
-        user_list = User.query.order_by(-User.is_admin).all()
+        user_list = User.query.order_by(-User.is_admin).filter(
+            User.is_show==True
+        ).all()
         users_data = []
         
         for user in user_list:
@@ -637,7 +645,15 @@ def account_manage():
             user = db.session.get(User, user_id)
             if current_user.id == user.id:
                 return jsonify({"error": "You cannot delete your own account!"}), 400
-            db.session.delete(user)
+            user.is_show = False
+            
+            user_waitings = db.session.query(Reservation).filter(
+                Reservation.user_id==user_id,
+                Reservation.start_time==None
+            ).all()
+            for user_waiting in user_waitings:
+                db.session.delete(user_waiting)
+            
             db.session.commit()
             return jsonify({"message": f"User {user.name}({user.username}) removed successfully"}), 200
 
@@ -654,7 +670,11 @@ def GPU_manage():
     
     if request.method == 'GET':
         # Retrieve all GPUs from the database and show them in a list.
-        GPU_list = GPU.query.order_by(-GPU.status, GPU.model, GPU.cuda_version, GPU.id).all()
+        GPU_list = GPU.query.order_by(
+            -GPU.status, GPU.model, GPU.cuda_version, GPU.id
+        ).filter(
+            GPU.is_show==True
+        ).all()
         GPUs_data = []
         
         for gpu in GPU_list:
@@ -713,7 +733,7 @@ def GPU_manage():
                 return jsonify({"error": "You cannot delete a GPU whose status is Enabled!"}), 400
             if gpu.in_use:
                 return jsonify({"error": "You cannot delete a GPU whose is in use!"}), 400
-            db.session.delete(gpu)
+            gpu.is_show = False
             db.session.commit()
             return jsonify({"message": f"GPU {gpu.model}({gpu.cuda_version}) removed successfully"}), 200
 
@@ -730,8 +750,14 @@ def user_gpu_access_manage():
     
     if request.method == 'GET':
         # Retrieve all GPUs from the database and show them in a list.
-        user_list = User.query.order_by(-User.is_admin).all()
-        GPU_list = GPU.query.order_by(-GPU.status, GPU.model, GPU.cuda_version, GPU.id).all()
+        user_list = User.query.order_by(-User.is_admin).filter(
+            User.is_show==True
+        ).all()
+        GPU_list = GPU.query.order_by(
+            -GPU.status, GPU.model, GPU.cuda_version, GPU.id
+        ).filter(
+            GPU.is_show==True
+        ).all()
         users_data = []
         gpus_data = []
         
