@@ -31,36 +31,44 @@ User.priority first(0>1>2), and then use reservation_time to queue
 
 <br><br>
 # Project Directory Structure:
-```
+```bash tree -I "__pycache__" --dirsfirst
 .
-├── .gitignore
-├── app
-│   ├── static
-│   │   ├── css
-│   │   │   ├── login-styles.css
-│   │   │   └── styles.css
-│   │   ├── images
-│   │   │   └── icon.png
-│   │   └── js
-│   │       ├── account_manage.js
-│   │       ├── edit_profile.js
-│   │       ├── login.js
-│   │       ├── register.js
-│   │       └── reservation.js
-│   ├── templates
-│   │   ├── account_manage.html
-│   │   ├── dashboard.html
-│   │   ├── edit_profile.html
-│   │   ├── layout.html
-│   │   ├── login.html
-│   │   ├── register.html
-│   │   └── reservation.html
-│   ├── app.py
-│   ├── config.py
-│   ├── create_admin.py
-│   ├── models.py
-│   └── email_sender.py
+├── static
+│   ├── css
+│   │   ├── login-styles.css
+│   │   └── styles.css
+│   ├── images
+│   │   └── icon.png
+│   └── js
+│       ├── account_manage.js
+│       ├── edit_profile.js
+│       ├── GPU_manage.js
+│       ├── login.js
+│       ├── register.js
+│       ├── reservation.js
+│       ├── reset_password.js
+│       └── user_gpu_access_manage.js
+├── templates
+│   ├── account_manage.html
+│   ├── dashboard.html
+│   ├── edit_profile.html
+│   ├── GPU_manage.html
+│   ├── index.html
+│   ├── layout.html
+│   ├── login.html
+│   ├── register.html
+│   ├── reservation.html
+│   ├── reservation_manage.html
+│   ├── reset_password.html
+│   └── user_gpu_access_manage.html
+├── app.py
+├── config.py
+├── create_admin.py
+├── email_sender.py
+├── models.py
 └── README.md
+
+6 directories, 29 files
 ```
 ---
 ---
@@ -92,56 +100,84 @@ class Charts_Config:
 ---
 <br><br>
 
-# Database tables:
-## Table `Reservation`:
-| Field             | Type          | Constraints                              | Description                     |
-| ------------------|---------------|------------------------------------------|---------------------------------|
-| `id`              | Integer       | Primary Key                              | 唯一識別碼                       |
-| `user_id`         | Integer       | ForeignKey('user.id'), nullable=False    | 連接到 User 表的外鍵             |
-| `card`            | String(20)    | Nullable=False                           | 用戶的卡片資訊                   |
-| `duration`        | Integer       | Nullable=False                           | 預約的持續時間                   |
-| `reservation_time`| DateTime      | Nullable=False                           | 預約時間                         |
-| `start_time`      | DateTime      | Nullable=True                            | 預約開始時間                     |
-| `end_time`        | DateTime      | Nullable=True                            | 預約結束時間                     |
-| `user`            | Relationship  | backref='reservations'                   | 與 User 表的關聯                 |
+# Database Schema (資料庫結構)
 
-<br><br>
+## Tables (資料表)
 
-## Table `User`:
-| Field            | Type           | Constraints                              | Description                       |
-|------------------|----------------|------------------------------------------|-----------------------------------|
-| `id`             | Integer        | Primary Key                              | 唯一識別碼                         |
-| `username`       | String(80)     | Unique, Nullable=False                   | 用戶名                             |
-| `name`           | String(100)    | Nullable=False                           | 用戶名稱                           |
-| `email`          | String(100)    | Unique, Nullable=False                   | 電子郵件                           |
-| `phone`          | String(16)     | Unique, Nullable=False                   | 電話號碼                           |
-| `lab`            | String(80)     | Nullable=False                           | 所屬實驗室                         |
-| `priority`       | Integer        | Nullable=False                           | 優先級                             |
-| `authentication` | Boolean        | Default=False, Nullable=False            | 用戶認證狀態                       |
-| `is_admin`       | Boolean        | Default=False, Nullable=False            | 是否為管理員                       |
-| `password_hash`  | String(128)    | Nullable=False                           | 密碼哈希值                         |
+### User (使用者)
+| Column                | Type        | Constraints                                 | Description                             |
+|-----------------------|-------------|---------------------------------------------|-----------------------------------------|
+| id                    | Integer     | Primary Key                                 | User's UID                              |
+| username              | String(80)  | Unique, Not Null                            | User's Account                          |
+| name                  | String(100) | Not Null                                    | User's Fullname                         |
+| email                 | String(100) | Unique, Not Null                            | User's Email                            |
+| phone                 | String(16)  | Unique, Not Null                            | User's Phone Number                     |
+| lab                   | String(80)  | Not Null                                    | User's Lab                               |
+| priority              | Integer     | Not Null                                    | 使用者的優先級 (數值越小優先度越高)         |
+| time_multiplier       | Float       | Default: 1.0, Not Null                      | GPU 可租用時間倍率 (例如 1.0 表示正常倍率)  |
+| is_admin              | Boolean     | Default: False, Not Null                    | 是否為管理員                              |
+| password_hash         | String(128) | Not Null                                    | 使用者密碼的雜湊值                         |
 
-<br><br>
+### GPU (圖形處理器)
+| Column                | Type        | Constraints                                 | Description (描述)                            |
+|-----------------------|-------------|---------------------------------------------|-----------------------------------------------|
+| id                    | Integer     | Primary Key                                 | GPU 的唯一編號                                 |
+| model                 | String(80)  | Not Null                                    | GPU 型號                                       |
+| cuda_version          | String(80)  | Not Null                                    | 支援的 CUDA 版本                               |
+| max_hours             | Integer     | Default: 48, Not Null                       | 單次申請 GPU 的最大時數                        |
+| connection_info       | String(255) | Not Null                                    | GPU Server 連線資訊                      |
+| status                | Boolean     | Not Null                                    | GPU 狀態 (啟用/禁用)                           |
+| in_use                | Boolean     | Default: False                              | GPU 是否正在使用                               |
 
-## Table `gpu_stats`:
-| Field                  | Type           | Constraints                              | Description                              |
-|------------------------|----------------|------------------------------------------|------------------------------------------|
-| `id`                   | Integer        | Primary Key, Autoincrement               | 唯一識別碼                                |
-| `gpu_index`            | Integer        |                                          | GPU 索引                                 |
-| `timestamp`            | DateTime       |                                          | 記錄時間                                 |
-| `name`                 | String(255)    |                                          | GPU 名稱                                 |
-| `pci_bus_id`           | String(255)    |                                          | PCI bus ID                               |
-| `driver_version`       | String(255)    |                                          | 驅動版本                                 |
-| `pstate`               | String(50)     |                                          | GPU 狀態                                 |
-| `pcie_link_gen_max`    | Integer        |                                          | 最大 PCIe 連結代數                        |
-| `pcie_link_gen_current`| Integer        |                                          | 當前 PCIe 連結代數                        |
-| `temperature_gpu`      | Float          |                                          | GPU 溫度                                 |
-| `utilization_gpu`      | Float          |                                          | GPU 使用率                               |
-| `utilization_memory`   | Float          |                                          | 記憶體使用率                             |
-| `memory_total`         | Float          |                                          | 記憶體總量                               |
-| `memory_free`          | Float          |                                          | 可用記憶體                               |
-| `memory_used`          | Float          |                                          | 已用記憶體                               |
+### Reservation (GPU 預約)
+| Column                | Type        | Constraints                                 | Description (描述)                            |
+|-----------------------|-------------|---------------------------------------------|-----------------------------------------------|
+| id                    | Integer     | Primary Key                                 | 預約的唯一編號                                 |
+| user_id               | Integer     | Foreign Key (user.id), Not Null             | 預約使用者的 ID                                |
+| gpu_id                | Integer     | Foreign Key (gpu.id), Not Null              | 預約 GPU 的 ID                                 |
+| duration              | Integer     | Not Null                                    | 預約使用的時間長度 (以小時為單位)             |
+| reservation_time      | DateTime    | Not Null                                    | 預約建立的時間                                 |
+| notification_time     | DateTime    | Nullable                                    | 通知下一位使用者的時間                         |
+| start_time            | DateTime    | Nullable                                    | GPU 使用開始時間                               |
+| end_time              | DateTime    | Nullable                                    | GPU 使用結束時間                               |
 
+### GPUStats (GPU 統計數據)
+| Column                | Type        | Constraints                                 | Description (描述)                            |
+|-----------------------|-------------|---------------------------------------------|-----------------------------------------------|
+| id                    | Integer     | Primary Key, Auto Increment                 | 統計數據的唯一編號                             |
+| gpu_index             | Integer     |                                             | GPU 的索引編號                                 |
+| timestamp             | DateTime    |                                             | 記錄時間                                       |
+| name                  | String(255) |                                             | GPU 名稱                                       |
+| pci_bus_id            | String(255) |                                             | PCI Bus ID                                     |
+| driver_version        | String(255) |                                             | 驅動版本                                       |
+| pstate                | String(50)  |                                             | 電源狀態                                       |
+| pcie_link_gen_max     | Integer     |                                             | 最大 PCIe 傳輸代數                             |
+| pcie_link_gen_current | Integer     |                                             | 當前 PCIe 傳輸代數                             |
+| temperature_gpu       | Float       |                                             | GPU 溫度                                       |
+| utilization_gpu       | Float       |                                             | GPU 使用率 (%)                                 |
+| utilization_memory    | Float       |                                             | 記憶體使用率 (%)                               |
+| memory_total          | Float       |                                             | GPU 記憶體總量 (MB)                            |
+| memory_free           | Float       |                                             | GPU 記憶體空閒量 (MB)                          |
+| memory_used           | Float       |                                             | GPU 記憶體使用量 (MB)                          |
 
+### user_gpu_access (使用者-GPU 關聯表)
+| Column                | Type        | Constraints                                 | Description (描述)                            |
+|-----------------------|-------------|---------------------------------------------|-----------------------------------------------|
+| user_id               | Integer     | Foreign Key (user.id), Primary Key, Cascade | 使用者的 ID                                    |
+| gpu_id                | Integer     | Foreign Key (gpu.id), Primary Key, Cascade  | GPU 的 ID                                      |
+
+## Relationships (關聯關係)
+
+1. **User (使用者)**
+   - `reservations`: 與 Reservation 的一對多關係
+   - 與 GPU 的多對多關係 (透過 `user_gpu_access`)
+
+2. **GPU (圖形處理器)**
+   - `reservations`: 與 Reservation 的一對多關係
+   - 與 User 的多對多關係 (透過 `user_gpu_access`)
+
+3. **Reservation (GPU 預約)**
+   - `user`: 與 User 的多對一關係
+   - `gpu`: 與 GPU 的多對一關係
 
 
