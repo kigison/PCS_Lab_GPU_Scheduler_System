@@ -48,11 +48,20 @@
                     {% if gpu.start_time %}
                         <div class="alert alert-info">
                             You are using GPU now.
+                            <br>
+                            <div class="remaining_time" data-id="{{ gpu.id }}" start_time="{{ gpu.start_time }}" duration="{{ gpu.duration }}">
+                                The remaining time for your reservation is: <span id="countdown-{{ gpu.id }}"></span>
+                            </div>
+                            
                         </div>
                         <button class="btn btn-danger terminate-btn" data-id="{{ gpu.id }}">Early Stop</button>
                     {% elif gpu.notification_time %}
                         <div class="alert alert-info">
-                            You have got the GPU access right.  Please click "Start" and start to use GPU.
+                            You have been granted access to the GPU. Please click 'Start' to begin using it.<br>
+                            If you don't click 'Start' within 12 hours, your reservation will be automatically canceled.
+                            <div class="remaining_time" data-id="{{ gpu.id }}" start_time="{{ gpu.notification_time }}" duration="12">
+                                Remaining time: <span id="countdown-{{ gpu.id }}"></span>
+                            </div>
                         </div>
                         <button class="btn btn-success start-btn" data-id="{{ gpu.id }}">Start</button>
                     {% else %}

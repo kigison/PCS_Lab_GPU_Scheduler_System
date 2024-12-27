@@ -254,6 +254,7 @@ def reservation():
                 ).all()
                 # print(existing_reservations)
                 current_reservation = None
+                duration = None
                 start_time = None
                 end_time = None
                 notification_time = None
@@ -270,6 +271,7 @@ def reservation():
                         if existing_reservation.user_id == current_user.id:
                             current_reservation = existing_reservation
                             notification_time = current_reservation.notification_time
+                            duration = current_reservation.duration
                             if current_reservation.start_time is not None:
                                 start_time = current_reservation.start_time
                             elif current_reservation.end_time is not None:
@@ -287,7 +289,8 @@ def reservation():
                         "current_reservation": current_reservation,
                         "notification_time": notification_time,
                         "start_time": start_time,
-                        "end_time": end_time
+                        "end_time": end_time,
+                        "duration": duration,
                     }
                 )
         
