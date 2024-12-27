@@ -49,12 +49,12 @@
                         <div class="alert alert-info">
                             You are using GPU now.
                         </div>
-                        <button class="btn btn-primary terminate-btn" data-id="{{ gpu.id }}">Terminate</button>
-                    {% elif gpu.end_time %}
+                        <button class="btn btn-danger terminate-btn" data-id="{{ gpu.id }}">Early Stop</button>
+                    {% elif gpu.notification_time %}
                         <div class="alert alert-info">
                             You have got the GPU access right.  Please click "Start" and start to use GPU.
                         </div>
-                        <button class="btn btn-primary start-btn" data-id="{{ gpu.id }}">Start</button>
+                        <button class="btn btn-success start-btn" data-id="{{ gpu.id }}">Start</button>
                     {% else %}
                         <div class="alert alert-info">
                             You have already reserved for GPU usage.

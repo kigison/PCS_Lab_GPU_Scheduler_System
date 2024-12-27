@@ -252,10 +252,11 @@ def reservation():
                 ).filter(
                     Reservation.gpu_id==gpu.id
                 ).all()
-                print(existing_reservations)
+                # print(existing_reservations)
                 current_reservation = None
                 start_time = None
                 end_time = None
+                notification_time = None
                 waiting_list = []
                 for existing_user, existing_reservation in existing_reservations:
                     if existing_reservation.end_time is None or existing_reservation.end_time > datetime.now():
@@ -268,6 +269,7 @@ def reservation():
                         })
                         if existing_reservation.user_id == current_user.id:
                             current_reservation = existing_reservation
+                            notification_time = current_reservation.notification_time
                             if current_reservation.start_time is not None:
                                 start_time = current_reservation.start_time
                             elif current_reservation.end_time is not None:
@@ -283,6 +285,7 @@ def reservation():
                         "status": gpu.status,  # 用於判斷能否預約
                         "waiting_list": waiting_list,
                         "current_reservation": current_reservation,
+                        "notification_time": notification_time,
                         "start_time": start_time,
                         "end_time": end_time
                     }
@@ -349,7 +352,7 @@ def reservation():
             
             return jsonify({'message': 'Reservation canceled successfully.'}), 200
             
-        else:
+        else:  # action == 'reserve'
             reservations = db.session.query(Reservation).filter(
                 Reservation.gpu_id==gpu_id
             ).all()
@@ -376,8 +379,7 @@ def reservation():
                     gpu_id=gpu_id,
                     duration=duration,
                     reservation_time=time_now,
-                    start_time=time_now,
-                    end_time=time_now + timedelta(hours=float(duration)),
+                    notification_time=time_now,
                 )
             
             db.session.add(new_reservation)
