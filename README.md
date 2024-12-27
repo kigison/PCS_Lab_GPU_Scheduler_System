@@ -137,7 +137,7 @@ class Charts_Config:
 | gpu_id                | Integer     | Foreign Key (gpu.id), Not Null              | 預約 GPU 的 ID                                 |
 | duration              | Integer     | Not Null                                    | 預約使用的時間長度 (以小時為單位)             |
 | reservation_time      | DateTime    | Not Null                                    | 預約建立的時間                                 |
-| notification_time     | DateTime    | Nullable                                    | 通知下一位使用者的時間                         |
+| notification_time     | DateTime    | Nullable                                    | 通知輪到該使用者的時間                         |
 | start_time            | DateTime    | Nullable                                    | GPU 使用開始時間                               |
 | end_time              | DateTime    | Nullable                                    | GPU 使用結束時間                               |
 
