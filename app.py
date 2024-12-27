@@ -397,32 +397,28 @@ def reservation_manage():
     
     if request.method == 'GET':
         GPU_list = GPU.query.order_by(-GPU.status, GPU.model, GPU.cuda_version, GPU.id).all()
-        reservation_history = db.session.query(User, Reservation)
-        print(reservation_history)
+        reservation_history = db.session.query(User, Reservation).join(
+                Reservation, Reservation.user_id == User.id
+            ).order_by(
+                Reservation.end_time.asc()
+            )
         GPUs_data = []
-        history = []
-
-        # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-        # gpu_id = db.Column(db.Integer, db.ForeignKey('gpu.id'), nullable=False)
-        # duration = db.Column(db.Integer, nullable=False)
-        # reservation_time = db.Column(db.DateTime, nullable=False)
-        # notification_time = db.Column(db.DateTime, nullable=True)
-        # start_time = db.Column(db.DateTime, nullable=True)
-        # end_time = db.Column(db.DateTime, nullable=True)
             
         for gpu in GPU_list:
             GPUs_data.append(
                 {
-                    "id": gpu.id,
+                    # "user_id":user.id,
+                    "gpu_id": gpu.id,
                     "model": gpu.model,
                     "cuda_version": gpu.cuda_version,
                     "max_hours": math.ceil(gpu.max_hours*current_user.time_multiplier),  # user可預約的最大時間
                     "connection_info": gpu.connection_info,  # 用於提供連接資訊(輪到當下才顯示)
-                    "status": gpu.status  # 用於判斷能否預約
+                    "status": gpu.status,  # 用於判斷能否預約
+                    "history_list": reservation_history.filter(Reservation.gpu_id==gpu.id).all()
                 }
             )
         
-        return render_template('reservation_manage.html', GPUs_data=GPUs_data, history=history)
+        return render_template('reservation_manage.html', GPUs_data=GPUs_data)
     
     # if request.method == 'GET':
     #     for gpu in GPU_list:
