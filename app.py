@@ -404,8 +404,10 @@ def reservation_manage():
         GPU_list = GPU.query.order_by(-GPU.status, GPU.model, GPU.cuda_version, GPU.id).all()
         reservation_history = db.session.query(User, Reservation).join(
                 Reservation, Reservation.user_id == User.id
+            ).filter(
+                Reservation.end_time.isnot(None)  # Exclude records where end_time is NULL
             ).order_by(
-                Reservation.end_time.asc()
+                Reservation.end_time.desc()
             )
         GPUs_data = []
             
