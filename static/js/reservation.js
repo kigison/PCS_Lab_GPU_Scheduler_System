@@ -1,4 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 計算並更新倒數時間
+    function updateCountdown(id, startTime, duration) {
+        const countdownElement = document.getElementById(`countdown-${id}`);
+        const startTimeDate = new Date(startTime); // 把 datetime 字符串轉換成 Date 物件
+        const endTime = startTimeDate.getTime() + (duration * 60 * 60 * 1000); // Convert duration to milliseconds
+        setInterval(function() {
+            const now = new Date().getTime();
+            const timeLeft = endTime - now;
+
+            if (timeLeft <= 0) {
+                countdownElement.innerHTML = "Time is up!";
+            } else {
+                const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                countdownElement.innerHTML = `${hours}hours ${String(minutes).padStart(2, '0')}minutes.`; // 顯示 [小時:分鐘]
+            }
+        }, 1000);
+    }
+
+    // 當頁面加載完成後，對每個GPU進行倒數計時更新
+    document.querySelectorAll('.remaining_time').forEach((element) => {
+        const gpuId = element.getAttribute('data-id');
+        const startTime = element.getAttribute('start_time');
+        const duration = element.getAttribute('duration');
+        
+        if (gpuId && startTime && duration) {
+            updateCountdown(gpuId, startTime, duration);
+        }
+    });
+
     function addEventListeners() {
         const terminateButtons = document.querySelectorAll('.terminate-btn');
         terminateButtons.forEach((button) =>
