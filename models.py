@@ -29,6 +29,7 @@ class User(db.Model):
         stmt = (
             select(GPU.id)
             .select_from(user_gpu_access.join(GPU))
+            .filter(GPU.is_show==True)
             .where(user_gpu_access.c.user_id == self.id)
         )
         return db.session.execute(stmt).scalars().all()
@@ -37,6 +38,7 @@ class User(db.Model):
         stmt = (
             select(GPU.model, GPU.cuda_version)
             .select_from(user_gpu_access.join(GPU))
+            .filter(GPU.is_show==True)
             .where(user_gpu_access.c.user_id == self.id)
         )
         return db.session.execute(stmt).all()
