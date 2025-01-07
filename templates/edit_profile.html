@@ -44,9 +44,13 @@
                         </td>
                         <td>
                             <ul>
-                                {% for gpu in user.gpu_access_list %}
-                                    <li>{{ gpu.model }} - {{ gpu.cuda_version }}</li>
-                                {% endfor %}
+                                {% if user.gpu_access_list %}
+                                    {% for gpu in user.gpu_access_list %}
+                                        <li>{{ gpu.model }} - {{ gpu.cuda_version }}</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>You are not authorized to access any GPUs.</li>
+                                {% endif %}
                             </ul>
                         </td>
                         <td>
