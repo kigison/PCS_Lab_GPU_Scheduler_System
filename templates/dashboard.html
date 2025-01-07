@@ -13,16 +13,16 @@
         <a href="{{ url_for('index')}}" class="btn btn-primary"> Back</a>
         <h1>Dashboard</h1>
 
-        {% if access_gpu_model is defined and not access_gpu_model %}
+        {% if access_gpu_model is defined and not access_gpu_model and not session['is_admin'] %}
             <div class="alert alert-info">
                 No GPUs available for display in your GPU authorization.
             </div>
         {% endif %}
 
-        {% if 'GH200_480G' in access_gpu_model %}
+        {% if session['is_admin'] or 'GH200_480G' in access_gpu_model %}
         {% endif %}
 
-        {% if 'A100_40G' in access_gpu_model %}
+        {% if session['is_admin'] or 'A100_40G' in access_gpu_model %}
             <div class="container">
                 <h2>A100 GPU Statistics</h2>
                 <hr>
@@ -75,19 +75,19 @@
             </div>
         {% endif %}
 
-        {% if 'V100_16G' in access_gpu_model %}
+        {% if session['is_admin'] or 'V100_16G' in access_gpu_model %}
         {% endif %}
 
-        {% if 'A2_16G' in access_gpu_model %}
+        {% if session['is_admin'] or 'A2_16G' in access_gpu_model %}
         {% endif %}
 
-        {% if 'RTX4090_24G' in access_gpu_model %}
+        {% if session['is_admin'] or 'RTX4090_24G' in access_gpu_model %}
         {% endif %}
 
-        {% if 'RTX4070_12G' in access_gpu_model %}
+        {% if session['is_admin'] or 'RTX4070_12G' in access_gpu_model %}
         {% endif %}
 
-        {% if 'RTX3080_10G' in access_gpu_model %}
+        {% if session['is_admin'] or 'RTX3080_10G' in access_gpu_model %}
         {% endif %}
         
     </div>
