@@ -116,8 +116,8 @@ def login():
         password = data.get('password')
 
         user = User.query.filter_by(username=username).first()
-        if user and user.is_show:
-            return jsonify({"message": f"Hi, {user.name}. You have been deleted!"}), 401
+        if user and not user.is_show:
+            return jsonify({"error": f"Hi, {user.name}. Your access privileges have been revoked!"}), 401
         if user and user.check_password(password):
             session['user_id'] = user.id
             session['username'] = username
